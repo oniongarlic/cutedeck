@@ -46,6 +46,8 @@ elseif(UNIX)
     set(DECKLINK_DIR "/opt/decklink")
 
     target_include_directories(cutedeck PRIVATE "${DECKLINK_DIR}/include")
+    target_sources(cutedeck PRIVATE "${DECKLINK_DIR}/include/DeckLinkAPIDispatch.cpp")
+    target_link_libraries(cutedeck PRIVATE dl)
 endif()
 
 set_target_properties(cutedeck PROPERTIES PUBLIC_HEADER cutedeck.h)
