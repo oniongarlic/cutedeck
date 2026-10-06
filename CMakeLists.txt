@@ -72,7 +72,7 @@ install(TARGETS cutedeck
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
-install(DIRECTORY ${CMAKE_BINARY_DIR}/CutesDeck/ DESTINATION ${CMAKE_INSTALL_PREFIX}/qml/CuteDeck/)
+install(DIRECTORY ${CMAKE_BINARY_DIR}/CuteDeck/ DESTINATION ${CMAKE_INSTALL_PREFIX}/qml/CuteDeck/)
 
 set_target_properties(cutedeckplugin PROPERTIES INSTALL_RPATH "$ORIGIN/../../lib")
 install(TARGETS cutedeckplugin LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/qml/CuteDeck/)
