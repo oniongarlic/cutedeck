@@ -9,6 +9,8 @@
 #include <QtMultimedia/QVideoSink>
 #include <QtMultimedia/QVideoFrame>
 
+#include "cutedeck_global.h"
+
 #include "DeckLinkAPI.h"
 
 struct DeckLinkDevice
@@ -35,7 +37,7 @@ struct DeckLinkDevice
 };
 Q_DECLARE_METATYPE(DeckLinkDevice)
 
-class DeckLink : public QObject
+class CUTEDECK_EXPORT DeckLink : public QObject
 {
     Q_OBJECT
     QML_ELEMENT

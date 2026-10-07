@@ -17,7 +17,7 @@
 
 class DeckLinkInputCallback;
 
-class Decklinksource: public QObject
+class CUTEDECK_EXPORT Decklinksource: public QObject
 {
     friend DeckLinkInputCallback;
     Q_OBJECT

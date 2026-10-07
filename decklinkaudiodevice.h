@@ -4,7 +4,9 @@
 #include <QIODevice>
 #include <QObject>
 
-class DeckLinkAudioDevice : public QIODevice
+#include "cutedeck_global.h"
+
+class CUTEDECK_EXPORT DeckLinkAudioDevice : public QIODevice
 {
     Q_OBJECT
 public:

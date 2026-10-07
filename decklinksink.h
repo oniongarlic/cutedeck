@@ -21,7 +21,7 @@
 
 #include "decklink.h"
 
-class Decklinksink : public QObject
+class CUTEDECK_EXPORT Decklinksink : public QObject
 {
     Q_OBJECT
     QML_ELEMENT
