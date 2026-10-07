@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(cutedeck LANGUAGES CXX)
+project(cutedeck LANGUAGES CXX C)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -17,6 +17,12 @@ find_package(Qt6 REQUIRED COMPONENTS Core Gui Qml Multimedia)
 qt6_policy(SET QTP0001 NEW)
 qt_standard_project_setup(REQUIRES 6.8)
 
+if(WIN32)
+    set(DECKLINK_DIR "C:/Qt/decklink")
+elseif(UNIX)
+    set(DECKLINK_DIR "/opt/decklink")
+endif()
+
 add_library(cutedeck SHARED
   cutedeck_global.h
   cutedeck.cpp
@@ -30,6 +36,8 @@ add_library(cutedeck SHARED
   decklinksink.h
   decklinksource.cpp
   decklinksource.h
+
+  ${DECKLINK_DIR}/include/DeckLinkAPI_i.c
 )
 
 target_link_libraries(cutedeck PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt6::Gui Qt6::Qml Qt6::Multimedia)
@@ -37,14 +45,10 @@ target_link_libraries(cutedeck PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt6::Gui Qt6:
 target_compile_definitions(cutedeck PRIVATE CUTEDECK_LIBRARY)
 
 if(WIN32)
-    set(DECKLINK_DIR "C:/Qt/decklink")
-
     target_include_directories(cutedeck PRIVATE "${DECKLINK_DIR}/include")
     target_sources(cutedeck PRIVATE "${DECKLINK_DIR}/include/DeckLinkAPI_i.c")
     target_link_libraries(cutedeck PRIVATE ole32 uuid oleaut32)
 elseif(UNIX)
-    set(DECKLINK_DIR "/opt/decklink")
-
     target_include_directories(cutedeck PRIVATE "${DECKLINK_DIR}/include")
     target_sources(cutedeck PRIVATE "${DECKLINK_DIR}/include/DeckLinkAPIDispatch.cpp")
     target_link_libraries(cutedeck PRIVATE dl)
