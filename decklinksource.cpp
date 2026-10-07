@@ -4,6 +4,10 @@
 #include <QDebug>
 #include <QVideoFrameFormat>
 
+#ifndef Q_OS_WIN
+#define BOOL bool
+#endif
+
 class DeckLinkInputCallback: public IDeckLinkInputCallback
 {
 public:
@@ -381,7 +385,7 @@ out: ;
 bool Decklinksource::enableInput()
 {
     BMDDisplayMode amode;
-    int supported;
+    BOOL supported;
 
     if (m_input==nullptr) {
         qWarning("No input");

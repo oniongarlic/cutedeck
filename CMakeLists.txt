@@ -19,8 +19,10 @@ qt_standard_project_setup(REQUIRES 6.8)
 
 if(WIN32)
     set(DECKLINK_DIR "C:/Qt/decklink")
+    set(DECKLINKAPIC "${DECKLINK_DIR}/include/DeckLinkAPI_i.c")
 elseif(UNIX)
     set(DECKLINK_DIR "/opt/decklink")
+    set(DECKLINKAPIC "")
 endif()
 
 add_library(cutedeck SHARED
@@ -36,8 +38,7 @@ add_library(cutedeck SHARED
   decklinksink.h
   decklinksource.cpp
   decklinksource.h
-
-  ${DECKLINK_DIR}/include/DeckLinkAPI_i.c
+  ${DECKLINKAPIC}
 )
 
 target_link_libraries(cutedeck PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt6::Gui Qt6::Qml Qt6::Multimedia)

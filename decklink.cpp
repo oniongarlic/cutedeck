@@ -7,13 +7,15 @@
 #ifdef Q_OS_WIN
 #include <objbase.h>
 
-
 QString btoqs(BSTR name)
 {
     QString s = QString::fromWCharArray(name);
     SysFreeString(name);
     return s;
 }
+#else
+
+#define BOOL bool
 
 #endif
 
