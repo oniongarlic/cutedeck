@@ -24,7 +24,7 @@
 class CUTEDECK_EXPORT Decklinksink : public QObject
 {
     Q_OBJECT
-    QML_ELEMENT
+    QML_NAMED_ELEMENT(DeckLinkSink)
     Q_PROPERTY(QObject* decklink READ getDecklink WRITE setDecklink NOTIFY decklinkChanged FINAL REQUIRED)
     Q_PROPERTY(QObject* videoSink READ getVideoSink WRITE setVideoSink NOTIFY videoSinkChanged FINAL)
     Q_PROPERTY(QObject* audioSink READ getAudioSink FINAL)
