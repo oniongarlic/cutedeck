@@ -24,6 +24,14 @@ ApplicationWindow {
         }
     }
 
+    DeckLinkSink {
+        id: dlsink
+    }
+
+    DeckLinkSource {
+        id: dlsrc
+    }
+
     ToolBar {
         id: mainToolbar
         RowLayout {
