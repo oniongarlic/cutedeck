@@ -65,10 +65,7 @@ qt_add_qml_module(cutedeck
     OUTPUT_DIRECTORY CuteDeck
 )
 
-ADD_CUSTOM_TARGET(examples
-    SOURCES
-    qml/video-example.qml
-    qml/devices-example.qml)
+add_subdirectory(example)
 
 install(TARGETS cutedeck
     BUNDLE DESTINATION .
