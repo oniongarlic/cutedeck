@@ -354,6 +354,24 @@ int DeckLink::devices() const
     return m_devices;
 }
 
+QVariantList DeckLink::getDevices()
+{
+    QVariantList devs;
+    int i=0;
+
+    for (const DeckLinkDevice *item : std::as_const(m_devs)) {
+        QVariantMap dev;
+
+        dev["index"]=i;
+        dev["name"]=item->name;
+        dev["model"]=item->name;
+        devs.append(dev);
+        i++;
+    }
+
+    return devs;
+}
+
 QVariantMap DeckLink::getDeviceProperties(int index)
 {
     if (index>m_devs.count()-1 || index<0) {

@@ -48,6 +48,7 @@ public:
     bool haveDeckLink() const;
     int devices() const;
 
+    Q_INVOKABLE QVariantList getDevices();
     Q_INVOKABLE QVariantMap getDeviceProperties(int index);
 
     DeckLinkDevice *getDevice(int index);
