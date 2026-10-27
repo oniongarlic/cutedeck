@@ -32,6 +32,7 @@ ApplicationWindow {
         id: dl
         onDevicesChanged: {
             console.debug("*** We have decklink devices", devices)
+            deviceCombo.model=getDevices();
         }
         onHaveDeckLinkChanged: {
             console.debug("*** We have decklink support")
@@ -79,6 +80,16 @@ ApplicationWindow {
             anchors.fill: parent
             Label {
                 text: "Devices: "+dl.devices
+            }
+            ComboBox {
+                id: deviceCombo
+                textRole: "name"
+                valueRole: "index"
+                onActivated: {
+                    console.debug("Device", currentValue)
+                    var dev=dl.getDeviceProperties(currentValue)
+                    console.debug(JSON.stringify(dev))
+                }
             }
             Label {
                 text: "Input"
