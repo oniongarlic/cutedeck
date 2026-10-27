@@ -13,6 +13,8 @@ qt_add_qml_module(example
     URI CuteDeckExample
     VERSION 1.0
     QML_FILES Example.qml
+    IMPORTS TARGET cutedeck
+    DEPENDENCIES CuteDeck
 )
 
-target_link_libraries(example PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt6::Gui Qt6::Qml Qt6::Multimedia cutedeck)
+target_link_libraries(example PRIVATE Qt6::Core Qt6::Gui Qt6::Qml Qt6::Multimedia cutedeck)
