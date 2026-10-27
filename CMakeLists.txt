@@ -17,11 +17,9 @@ qt_standard_project_setup(REQUIRES 6.8)
 set(CMAKE_BUILD_RPATH_USE_ORIGIN TRUE)
 
 if(WIN32)
-    set(DECKLINK_DIR "C:/Qt/decklink")
-    set(DECKLINKAPIC "${DECKLINK_DIR}/include/DeckLinkAPI_i.c")
+    set(DECKLINK_DIR "C:/Qt/decklink")    
 elseif(UNIX)
-    set(DECKLINK_DIR "/opt/decklink")
-    set(DECKLINKAPIC "")
+    set(DECKLINK_DIR "/opt/decklink")    
 endif()
 
 add_library(cutedeck SHARED
@@ -36,11 +34,10 @@ add_library(cutedeck SHARED
   decklinksink.cpp
   decklinksink.h
   decklinksource.cpp
-  decklinksource.h
-  ${DECKLINKAPIC}
+  decklinksource.h  
 )
 
-target_link_libraries(cutedeck PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt6::Gui Qt6::Qml Qt6::Multimedia)
+target_link_libraries(cutedeck PRIVATE Qt6::Core Qt6::Gui Qt6::Qml Qt6::Multimedia)
 
 target_compile_definitions(cutedeck PRIVATE CUTEDECK_LIBRARY)
 
