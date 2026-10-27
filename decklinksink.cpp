@@ -19,10 +19,8 @@ Decklinksink::Decklinksink(QObject *parent)
     af.setChannelCount(2);
     af.setSampleFormat(QAudioFormat::Int16);
     
-#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
     m_audio_buffer=new QAudioBufferOutput(af, this);
     connect(m_audio_buffer, &QAudioBufferOutput::audioBufferReceived, this, &Decklinksink::onAudioBufferReceived);
-#endif
     
     QAudioOutput a;
 
