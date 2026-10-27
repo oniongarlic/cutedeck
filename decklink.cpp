@@ -178,7 +178,18 @@ DeckLink::DeckLink(QObject *parent)
                 dld->key=k;
 
                 result = deckLinkAttributes->GetFlag(BMDDeckLinkSupportsInternalKeying, &ki);
+                if (result != S_OK) {
+                    dev["keyerInternal"]=false;
+                } else {
+                    dev["keyerInternal"]=ki;
+                }
+
                 result = deckLinkAttributes->GetFlag(BMDDeckLinkSupportsExternalKeying, &ke);
+                if (result != S_OK) {
+                    dev["keyerExternal"]=false;
+                } else {
+                    dev["keyerExternal"]=ke;
+                }
 
                 qDebug() << "Int, Ext" << ki << ke;
             }
