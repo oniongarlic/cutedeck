@@ -309,21 +309,43 @@ void Decklinksink::displayImage(const QImage &frame)
 void Decklinksink::imageToBuffer(const QImage &frame)
 {
     uint8_t* deckLinkBuffer=nullptr;
+    IDeckLinkVideoBuffer* frameBuffer = nullptr;
 
-    if (m_frame->GetBytes((void**)&deckLinkBuffer) != S_OK) {
-        qWarning("Failed to get buffer pointer");
+    if (m_frame->QueryInterface(IID_IDeckLinkVideoBuffer, (void**)&frameBuffer) != S_OK) {
+        qWarning("Failed to get frame buffer interface");
         return;
+    }
+
+    if (frameBuffer->StartAccess(bmdBufferAccessWrite) != S_OK) {
+        qWarning("Failed to get read access to frame buffer");
+        goto out;
+    }
+
+    if (frameBuffer->GetBytes((void**)&deckLinkBuffer) != S_OK) {
+        goto out;
+    }
+
+    if (!deckLinkBuffer) {
+        qWarning("Failed to get frame buffer contents");
+        goto out;
     }
 
     for (int i=0;i<frame.height(); i++) {
         memcpy(deckLinkBuffer, frame.constScanLine(i), frame.bytesPerLine());
         deckLinkBuffer += m_frame->GetRowBytes();
     }
+
+out:;
+    if (frameBuffer) {
+        frameBuffer->EndAccess(bmdBufferAccessWrite);
+        frameBuffer->Release();
+    }
 }
 
 void Decklinksink::clearBuffer(int value)
 {
     uint8_t* deckLinkBuffer=nullptr;
+    IDeckLinkVideoBuffer* frameBuffer = nullptr;
 
     if (!m_decklink->haveDeckLink())
         return;
@@ -331,12 +353,41 @@ void Decklinksink::clearBuffer(int value)
     if (!m_output)
         return;
 
-    if (m_frame->GetBytes((void**)&deckLinkBuffer) != S_OK) {
-        qWarning("Failed to get buffer pointer");
+    if (m_frame->QueryInterface(IID_IDeckLinkVideoBuffer, (void**)&frameBuffer) != S_OK) {
+        qWarning("Failed to get frame buffer interface");
         return;
     }
 
-    memset(deckLinkBuffer, value, m_fbsize.width()*m_fbsize.height()*4);
+    if (frameBuffer->StartAccess(bmdBufferAccessWrite) != S_OK) {
+        qWarning("Failed to get read access to frame buffer");
+        goto out;
+    }
+
+    if (frameBuffer->GetBytes((void**)&deckLinkBuffer) != S_OK) {
+        goto out;
+    }
+
+    if (!deckLinkBuffer) {
+        qWarning("Failed to get frame buffer contents");
+        goto out;
+    }
+
+    if (frameBuffer->GetBytes((void**)&deckLinkBuffer) != S_OK) {
+        goto out;
+    }
+
+    if (!deckLinkBuffer) {
+        qWarning("Failed to get frame buffer contents");
+        goto out;
+    }
+
+    memset(deckLinkBuffer, value, m_frame->GetWidth()*m_frame->GetHeight()*4);
+
+out:;
+    if (frameBuffer) {
+        frameBuffer->EndAccess(bmdBufferAccessWrite);
+        frameBuffer->Release();
+    }
 
     m_output->DisplayVideoFrameSync(m_frame);
 }

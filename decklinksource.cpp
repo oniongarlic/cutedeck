@@ -195,8 +195,19 @@ QImage Decklinksource::getImage()
 void Decklinksource::imageToBuffer(const QImage &frame)
 {
     uint8_t* deckLinkBuffer=nullptr;
+    IDeckLinkVideoBuffer* frameBuffer = nullptr;
 
-    if (m_frame->GetBytes((void**)&deckLinkBuffer) != S_OK) {
+    if (m_frame->QueryInterface(IID_IDeckLinkVideoBuffer, (void**)&frameBuffer) != S_OK) {
+        qWarning("Failed to get video buffer");
+        return;
+    }
+
+    if (frameBuffer->StartAccess(bmdBufferAccessWrite) != S_OK) {
+        qWarning("Failed to get video buffer write access");
+        return;
+    }
+
+    if (frameBuffer->GetBytes((void**)&deckLinkBuffer) != S_OK) {
         qWarning("Failed to get buffer pointer");
         return;
     }
@@ -205,6 +216,10 @@ void Decklinksource::imageToBuffer(const QImage &frame)
         memcpy(deckLinkBuffer, frame.constScanLine(i), frame.bytesPerLine());
         deckLinkBuffer += m_frame->GetRowBytes();
     }
+
+    frameBuffer->EndAccess(bmdBufferAccessWrite);
+
+    frameBuffer->Release();
 }
 
 void Decklinksource::newFrame(IDeckLinkVideoInputFrame *frame, IDeckLinkAudioInputPacket* audio)
@@ -265,6 +280,7 @@ void Decklinksource::processFrame()
     HRESULT result;
     IDeckLinkVideoInputFrame *frame=nullptr;
     IDeckLinkAudioInputPacket *ap=nullptr;
+    IDeckLinkVideoBuffer* rgbaframeBuffer = nullptr;
     BMDTimeValue stime, ftime;
     BMDTimeScale vscale=1001;
     void *abuffer;
@@ -300,15 +316,28 @@ void Decklinksource::processFrame()
 
     QVideoFrame vf(vff);
 
-    if (frame->GetBytes((void**)&deckLinkBuffer)!= S_OK)
+    IDeckLinkVideoBuffer* frameBuffer = nullptr;
+    if (frame->QueryInterface(IID_IDeckLinkVideoBuffer, (void**)&frameBuffer) != S_OK) {
+        qWarning("Failed to get frame buffer interface");
         goto out;
+    }
 
-    if (!deckLinkBuffer)
+    if (frameBuffer->StartAccess(bmdBufferAccessRead) != S_OK) {
+        qWarning("Failed to get read access to frame buffer");
         goto out;
+    }
+
+    frameBuffer->GetBytes((void**)&deckLinkBuffer);
+
+    if (!deckLinkBuffer) {
+        qWarning("Failed to get frame buffer contents");
+        goto out;
+    }
 
     switch (pf) {
-    case bmdFormat8BitYUV: {        
+    case bmdFormat8BitYUV: {
         IDeckLinkMutableVideoFrame* rgbaFrame = nullptr;
+
         result = m_output->CreateVideoFrame(
             (int32_t)w,
             (int32_t)h,
@@ -326,9 +355,18 @@ void Decklinksource::processFrame()
         if (result!=S_OK) {
             qWarning("Failed to convert frame!");
             goto out;
+        }        
+
+        if (rgbaFrame->QueryInterface(IID_IDeckLinkVideoBuffer, (void**)&rgbaframeBuffer) != S_OK) {
+            goto out;
         }
 
-        if (rgbaFrame->GetBytes((void**)&deckLinkBuffer)!= S_OK) {
+        if (rgbaframeBuffer->StartAccess(bmdBufferAccessRead) != S_OK) {
+            qWarning("Failed to get read access to converted frame");
+            goto out;
+        }
+
+        if (rgbaframeBuffer->GetBytes((void**)&deckLinkBuffer) != S_OK) {
             qWarning("Failed to get converted buffer!");
             goto out;
         }
@@ -342,6 +380,12 @@ void Decklinksource::processFrame()
             vf.unmap();
         }
 
+        // Release buffer
+        rgbaframeBuffer->EndAccess(bmdBufferAccessRead);
+        rgbaframeBuffer->Release();
+        rgbaframeBuffer=nullptr;
+
+        // Release frame
         rgbaFrame->Release();
     }
     break;
@@ -357,6 +401,7 @@ void Decklinksource::processFrame()
     break;
     default:
         qWarning("Unexpected frame format, only ARGB, BGRA and 8-bit YUV supported");
+        qDebug() << pf;
         break;
     }
 
@@ -373,6 +418,10 @@ void Decklinksource::processFrame()
     }
 
 out: ;
+
+    frameBuffer->EndAccess(bmdBufferAccessRead);
+    frameBuffer->Release();
+    frameBuffer=nullptr;
 
     frame->Release();    
     if (ap) {

@@ -24,6 +24,9 @@ ApplicationWindow {
         onHaveDeckLinkChanged: {
             console.debug("*** We have decklink support")
         }
+        Component.onCompleted: {
+            console.debug("API Version used", dl.version())
+        }
     }
 
     DeckLinkSink {
