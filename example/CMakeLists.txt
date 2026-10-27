@@ -15,4 +15,4 @@ qt_add_qml_module(example
     QML_FILES Example.qml
 )
 
-target_link_libraries(example PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt6::Gui Qt6::Qml Qt6::Multimedia)
+target_link_libraries(example PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt6::Gui Qt6::Qml Qt6::Multimedia cutedeck)
