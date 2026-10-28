@@ -121,7 +121,7 @@ private:
 
     BMDDisplayMode m_mode=bmdModeHD1080p6000; // bmdModeHD1080p30
     bool m_premultiplied;
-    bool m_outputEnabled;
+    bool m_outputEnabled=false;
 };
 
 #endif // DECKLINKSINK_H
