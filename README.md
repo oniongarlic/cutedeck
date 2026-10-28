@@ -15,10 +15,13 @@ See the included example app for some ideas on what you can do.
 ## Requirements:
 
 * Qt 6.8 or later
+* Installed DeckLink desktop drivers
 * DeckLink SDK 16.0 or later
+* Windows or Linux (Mac untested, might need minor code adjustments)
 
 ## Tested devices
 
-* DeckLink Duo 2
 * Intensity Pro 4K
 * Mini Monitor HD
+* DeckLink Duo 2
+* UltraStudio Monitor 3G
