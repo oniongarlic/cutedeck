@@ -37,11 +37,22 @@ static bool getFlag(IDeckLinkProfileAttributes* dla, BMDDeckLinkAttributeID id) 
     bool bval=false;
 
     if (dla->GetFlag(id, &bval) != S_OK) {
-        qDebug() << "Failed to get flag for, default to false." << id;
+        qDebug() << "Failed to get flag for (default to false)." << id;
         bval=false;
     }
 
     return bval;
+}
+
+static int64_t getInt(IDeckLinkProfileAttributes* dla, BMDDeckLinkAttributeID id) {
+    int64_t ival;
+
+    if (dla->GetInt(id, &ival) != S_OK) {
+        qDebug() << "Failed to get int value for (default to 0)." << id;
+        ival=0;
+    }
+
+    return ival;
 }
 
 DeckLink::DeckLink(QObject *parent)
@@ -126,22 +137,22 @@ DeckLink::DeckLink(QObject *parent)
             qDebug() << "Unknown interface?";
         }
 
-        if (deckLinkAttributes->GetInt(BMDDeckLinkPersistentID, &value) == S_OK) {
-            dev["PersistentID"]=(qint64)(value);
-        } else {
-            dev["PersistentID"]=0;
-        }
-
-        if (deckLinkAttributes->GetInt(BMDDeckLinkTopologicalID, &value) == S_OK) {
-            dev["TopologicalID"]=(qint64)(value);
-        } else {
-            dev["TopologicalID"]=0;
-        }
+        dev["PersistentID"]=(qint64)getInt(deckLinkAttributes, BMDDeckLinkPersistentID);
+        dev["TopologicalID"]=(qint64)getInt(deckLinkAttributes, BMDDeckLinkTopologicalID);
 
         if (deckLinkAttributes->GetInt(BMDDeckLinkVideoIOSupport, &value) != S_OK) {
             qDebug("No output support, skipping");
             goto out;
         }
+
+        dev["Duplex"]=getFlag(deckLinkAttributes, BMDDeckLinkDuplex);
+
+        dev["audioChannels"]=(qint64)getInt(deckLinkAttributes, BMDDeckLinkMaximumAudioChannels);
+
+        dev["serialport"]=getFlag(deckLinkAttributes, BMDDeckLinkHasSerialPort);
+        dev["monitorOut"]=getFlag(deckLinkAttributes, BMDDeckLinkHasMonitorOut);
+
+        dev["LTC"]=getFlag(deckLinkAttributes, BMDDeckLinkSupportsHDMITimecode);
 
         dev["HANCfilter"]=getFlag(deckLinkAttributes, BMDDeckLinkHANCRequiresInputFilterConfiguration);
         dev["HANCoutput"]=getFlag(deckLinkAttributes, BMDDeckLinkSupportsHANCOutput);
