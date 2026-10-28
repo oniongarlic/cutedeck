@@ -16,3 +16,9 @@ See the included example app for some ideas on what you can do.
 
 * Qt 6.8 or later
 * DeckLink SDK 16.0 or later
+
+## Tested devices
+
+* DeckLink Duo 2
+* Intensity Pro 4K
+* Mini Monitor HD
