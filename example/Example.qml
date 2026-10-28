@@ -51,10 +51,7 @@ ApplicationWindow {
         }
         Component.onCompleted: {
             console.debug("API Version used", dl.version())
-        }
-        Component.onCompleted: {
-            console.debug("API Version used", dl.version())
-        }
+        }        
     }
 
     DeckLinkSink {
