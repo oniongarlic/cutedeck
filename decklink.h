@@ -12,6 +12,7 @@
 #include "cutedeck_global.h"
 
 #include "DeckLinkAPI.h"
+#include "DeckLinkAPIVersion.h"
 
 struct DeckLinkDevice
 {
@@ -50,6 +51,7 @@ public:
 
     Q_INVOKABLE QVariantList getDevices();
     Q_INVOKABLE QVariantMap getDeviceProperties(int index);
+    Q_INVOKABLE QString version() const { return m_api_ver; }
 
     DeckLinkDevice *getDevice(int index);
 
@@ -61,6 +63,8 @@ private:
     int m_devices=0;
     bool m_haveDeckLink=false;
     QList<DeckLinkDevice *> m_devs;
+
+    const QString m_api_ver=BLACKMAGIC_DECKLINK_API_VERSION_STRING;
 };
 
 #endif // DECKLINKS_H
