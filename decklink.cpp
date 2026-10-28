@@ -19,7 +19,7 @@ QString btoqs(BSTR name)
 
 #endif
 
-QVariantMap getConnections(BMDVideoConnection value)
+static QVariantMap getConnections(BMDVideoConnection value)
 {
 QVariantMap vo;
 
@@ -31,6 +31,17 @@ vo["composite"]=(bool)(bmdVideoConnectionComposite & value);
 vo["svideo"]=(bool)(bmdVideoConnectionSVideo & value);
 
 return vo;
+}
+
+static bool getFlag(IDeckLinkProfileAttributes* dla, BMDDeckLinkAttributeID id) {
+    bool bval=false;
+
+    if (dla->GetFlag(id, &bval) != S_OK) {
+        qDebug() << "Failed to get flag for, default to false." << id;
+        bval=false;
+    }
+
+    return bval;
 }
 
 DeckLink::DeckLink(QObject *parent)
@@ -132,6 +143,10 @@ DeckLink::DeckLink(QObject *parent)
             goto out;
         }
 
+        dev["HANCfilter"]=getFlag(deckLinkAttributes, BMDDeckLinkHANCRequiresInputFilterConfiguration);
+        dev["HANCoutput"]=getFlag(deckLinkAttributes, BMDDeckLinkSupportsHANCOutput);
+        dev["HANCinput"]=getFlag(deckLinkAttributes, BMDDeckLinkSupportsHANCInput);
+
         if ((value & bmdDeviceSupportsPlayback) != 0) {
             IDeckLinkDisplayModeIterator *dmi;
             IDeckLinkDisplayMode *dm;
@@ -177,19 +192,8 @@ DeckLink::DeckLink(QObject *parent)
                 dev["keyer"]=true;
                 dld->key=k;
 
-                result = deckLinkAttributes->GetFlag(BMDDeckLinkSupportsInternalKeying, &ki);
-                if (result != S_OK) {
-                    dev["keyerInternal"]=false;
-                } else {
-                    dev["keyerInternal"]=ki;
-                }
-
-                result = deckLinkAttributes->GetFlag(BMDDeckLinkSupportsExternalKeying, &ke);
-                if (result != S_OK) {
-                    dev["keyerExternal"]=false;
-                } else {
-                    dev["keyerExternal"]=ke;
-                }
+                dev["keyerInternal"]=getFlag(deckLinkAttributes, BMDDeckLinkSupportsInternalKeying);
+                dev["keyerExternal"]=getFlag(deckLinkAttributes, BMDDeckLinkSupportsExternalKeying);
 
                 qDebug() << "Int, Ext" << ki << ke;
             }
