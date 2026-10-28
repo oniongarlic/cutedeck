@@ -138,7 +138,9 @@ ApplicationWindow {
                 onActivated: {
                     console.debug("Device", currentValue)
                     var dev=dl.getDeviceProperties(currentValue)
-                    console.debug(JSON.stringify(dev))
+                    var j=JSON.stringify(dev);
+                    console.debug(j)
+                    debug.text=j;
                 }
             }
             Label {
@@ -226,12 +228,23 @@ ApplicationWindow {
             anchors.fill: parent
             anchors.margins: 4
             spacing: 4
-            // uniformCellSizes: true
+
+            ScrollView {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.minimumHeight: 80
+                TextArea {
+                    id: debug
+                    wrapMode: TextEdit.Wrap
+                }
+            }
 
             GridLayout {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignTop
+                uniformCellHeights: true
+                uniformCellWidths: true
                 rows: 2
                 columns: 2
                 rowSpacing: 4
@@ -259,7 +272,5 @@ ApplicationWindow {
                 }
             }
         }
-
-
     }
 }
