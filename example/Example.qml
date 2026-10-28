@@ -18,6 +18,46 @@ ApplicationWindow {
 
     header: mainToolbar
 
+    menuBar: MenuBar {
+        Menu {
+            title: "Profile"
+            MenuItem {
+                text: "Clear"
+                onClicked: dlsink.setProfile(0)
+            }
+            MenuItem {
+                text: "1 1-Full"
+                onClicked: dlsink.setProfile(1)
+            }
+            MenuItem {
+                text: "2 1-Half"
+                onClicked: dlsink.setProfile(2)
+            }
+            MenuItem {
+                text: "3 2-Full"
+                onClicked: dlsink.setProfile(3)
+            }
+            MenuItem {
+                text: "4 2-Half"
+                onClicked: dlsink.setProfile(4)
+            }
+            MenuItem {
+                text: "5 4-Half"
+                onClicked: dlsink.setProfile(5)
+            }
+        }
+        Menu {
+            title: "Capture"
+            MenuItem {
+                id: captureAudio
+                text: "Audio"
+                checkable: true
+                checked: dlsrc.audio
+            }
+        }
+    }
+
+
     MediaPlayer {
         id: mp
         videoOutput: vc1
@@ -26,6 +66,16 @@ ApplicationWindow {
 
     AudioOutput {
         id: ao
+    }
+
+    FileDialog {
+        id: videoFilesDialog
+        nameFilters: [ "*.mp4 *.mov *.mkv *.avi" ]
+        title: qsTr("Select video file")
+        currentFolder: StandardPaths.standardLocations(StandardPaths.MoviesLocation)[0]
+        onAccepted: {
+            mp.source=selectedFile;
+        }
     }
 
     DeckLink {
@@ -124,6 +174,28 @@ ApplicationWindow {
                     console.debug("Output mode", currentValue)
                     dlsink.setMode(currentValue)
                 }
+            }
+            ToolButton {
+                text: "Enable"
+                enabled: !dlsink.outputEnabled
+                onClicked: dlsink.enableOutput();
+            }
+            ToolButton {
+                text: "Disable"
+                enabled: dlsink.outputEnabled
+                onClicked: dlsink.disableOutput()
+            }
+            ToolButton {
+                text: "Open"
+                onClicked: videoFilesDialog.open()
+            }
+            ToolButton {
+                text: "Play"
+                onClicked: mp.play()
+            }
+            ToolButton {
+                text: "Stop"
+                onClicked: mp.stop()
             }
         }
     }
