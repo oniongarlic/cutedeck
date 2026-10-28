@@ -107,9 +107,7 @@ private:
     QAudioSink *m_audiosink=nullptr;
 
     QIODevice *m_audiosinkdevice=nullptr;
-#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
     QAudioBufferOutput *m_audio_buffer=nullptr;
-#endif
     bool m_audio=true;
 
     bool m_use_precompiled=true;
