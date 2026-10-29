@@ -69,6 +69,24 @@ ApplicationWindow {
         id: ao
     }
 
+    CaptureSession {
+        id: videoCaptureSession
+        camera: camera
+        videoOutput: vc3
+    }
+
+    MediaDevices {
+        id: mediaDevices
+    }
+
+    Camera {
+        id: camera
+        cameraDevice: mediaDevices.defaultVideoInput
+        focusMode: Camera.FocusModeAuto
+        onErrorOccurred: console.debug("CameraError: "+errorString)
+        onActiveChanged: console.debug("CameraActive:"+active)
+    }
+
     FileDialog {
         id: videoFilesDialog
         nameFilters: [ "*.mp4 *.mov *.mkv *.avi" ]
@@ -216,6 +234,13 @@ ApplicationWindow {
                 text: "Stop"
                 onClicked: mp.stop()
             }
+            ToolButton {
+                text: "Camera"
+                enabled: !camera.active
+                onClicked: {
+                    camera.start();
+                }
+            }
         }
     }
 
@@ -269,6 +294,26 @@ ApplicationWindow {
                 // 2
                 VideoOutput {
                     id: vc2
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignTop
+                    Layout.minimumHeight: 256
+                    Layout.preferredWidth: mainRow.width/2
+                    fillMode: Image.PreserveAspectFit
+                }
+                // 3
+                VideoOutput {
+                    id: vc3
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    Layout.alignment: Qt.AlignTop
+                    Layout.minimumHeight: 256
+                    Layout.preferredWidth: mainRow.width/2
+                    fillMode: Image.PreserveAspectFit
+                }
+                // 2
+                VideoOutput {
+                    id: vc4
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     Layout.alignment: Qt.AlignTop
