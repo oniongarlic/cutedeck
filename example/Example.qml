@@ -23,15 +23,15 @@ ApplicationWindow {
             title: "Profile"
             MenuItem {
                 text: "Clear"
-                onClicked: dlsink.setProfile(0)
+                onClicked: dlsink.setProfile(DeckLinkSink.ProfileDefault)
             }
             MenuItem {
                 text: "1 1-Full"
-                onClicked: dlsink.setProfile(1)
+                onClicked: dlsink.setProfile(DeckLinkSink.ProfileOneSubDeviceFullDuplex)
             }
             MenuItem {
                 text: "2 1-Half"
-                onClicked: dlsink.setProfile(2)
+                onClicked: dlsink.setProfile(DeckLinkSink.ProfileOneSubDeviceHalfDuplex)
             }
             MenuItem {
                 text: "3 2-Full"
@@ -53,6 +53,7 @@ ApplicationWindow {
                 text: "Audio"
                 checkable: true
                 checked: dlsrc.audio
+                enabled: !dlsrc.streaming
             }
         }
     }
@@ -89,15 +90,17 @@ ApplicationWindow {
 
             // Sinks
             dlsink.setOutput(0) // Duo 2 SDI-1 (1+2)
-            var d0=dl.getDeviceProperties(0)
-            outputCombo.model=d0["outputModes"]
+            var d0=dl.device(0)
+            console.debug(d0.name)
+            outputCombo.model=d0.outputModes
             outputCombo.currentIndex=outputCombo.indexOfValue(dlsink.getMode());
             mp.audioBufferOutput=dlsink.getAudioBuffer()
 
             // Sources
             dlsrc.setInput(3)
-            var d3=dl.getDeviceProperties(3)
-            inputCombo.model=d3["inputModes"]
+            var d3=dl.device(3)
+            console.debug(d3.name)
+            inputCombo.model=d3.inputModes
             inputCombo.currentIndex=inputCombo.indexOfValue(dlsrc.getMode());
         }
         Component.onCompleted: {
@@ -137,6 +140,9 @@ ApplicationWindow {
                 valueRole: "index"
                 onActivated: {
                     console.debug("Device", currentValue)
+                    var d=dl.device(currentValue)
+                    console.debug(d)
+                    console.debug(d.persistentID)
                     var dev=dl.getDeviceProperties(currentValue)
                     var j=JSON.stringify(dev);
                     console.debug(j)

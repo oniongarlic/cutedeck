@@ -1,3 +1,5 @@
 #include "cutedeck.h"
 
-Cutedeck::Cutedeck() {}
+Cutedeck::Cutedeck() {
+
+}

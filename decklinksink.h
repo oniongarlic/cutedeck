@@ -36,6 +36,16 @@ public:
     explicit Decklinksink(QObject *parent = nullptr);
     bool haveDeckLink() const;
 
+    enum DeviceProfile {
+        ProfileDefault,
+        ProfileOneSubDeviceFullDuplex,
+        ProfileOneSubDeviceHalfDuplex,
+        ProfileTwoSubDevicesFullDuplex,
+        ProfileTwoSubDevicesHalfDuplex,
+        ProfileFourSubDevicesHalfDuplex
+    };
+    Q_ENUM(DeviceProfile)
+
     Q_INVOKABLE void setFramebufferSize(QSize size);
     Q_INVOKABLE void setVideoSink(QObject *videosink);
 
@@ -44,7 +54,7 @@ public:
     Q_INVOKABLE qint32 getMode();
     Q_INVOKABLE bool setMode(qint32 mode);
 
-    Q_INVOKABLE bool setProfile(uint profile);
+    Q_INVOKABLE bool setProfile(DeviceProfile profile);
     Q_INVOKABLE bool setKeyer(bool enable, uint8_t level=255, bool external=true);
 
     Q_INVOKABLE bool keyerLevel(uint8_t level);
@@ -83,6 +93,8 @@ signals:
     void premultipliedChanged();
 
     void outputEnabledChanged();
+
+    void deviceProfileChanged(DeviceProfile profile);
 
 public slots:
     void displayFrame(const QVideoFrame &frame);

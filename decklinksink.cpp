@@ -102,7 +102,7 @@ bool Decklinksink::setMode(qint32 mode)
     return true;
 }
 
-bool Decklinksink::setProfile(uint profile)
+bool Decklinksink::setProfile(DeviceProfile profile)
 {
     HRESULT result;
     IDeckLinkProfileManager *manager = NULL;
@@ -125,21 +125,26 @@ bool Decklinksink::setProfile(uint profile)
     }
 
     switch (profile) {
-    case 0:
-    case 1:
+    case ProfileDefault:
+    case ProfileOneSubDeviceFullDuplex:
         profile_id=bmdProfileOneSubDeviceFullDuplex;
         break;
-    case 2:
+    case ProfileOneSubDeviceHalfDuplex:
         profile_id=bmdProfileOneSubDeviceHalfDuplex;
         break;
-    case 3:
+    case ProfileTwoSubDevicesFullDuplex:
         profile_id=bmdProfileTwoSubDevicesFullDuplex;
         break;
-    case 4:
+    case ProfileTwoSubDevicesHalfDuplex:
         profile_id=bmdProfileTwoSubDevicesHalfDuplex;
         break;
-    case 5:
+    case ProfileFourSubDevicesHalfDuplex:
         profile_id=bmdProfileFourSubDevicesHalfDuplex;
+        break;
+    default:
+        qWarning("Unknown device profile id requested");
+        manager->Release();
+        return false;
         break;
     }
 
@@ -148,11 +153,13 @@ bool Decklinksink::setProfile(uint profile)
     if (result==S_OK && profile) {
         result=lp->SetActive();
         lp->Release();
+
+        emit deviceProfileChanged(profile);
     }
 
     manager->Release();
 
-    qDebug() << "Profile set " << profile_id << (bool)(result==S_OK);
+    qDebug() << "Profile set " << profile_id << (bool)(result==S_OK);    
 
     return result==S_OK;
 }
