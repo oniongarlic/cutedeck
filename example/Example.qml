@@ -17,6 +17,7 @@ ApplicationWindow {
     title: qsTr("CuteDeck devices example")
 
     header: mainToolbar
+    footer: secondaryToolbar
 
     menuBar: MenuBar {
         Menu {
@@ -58,10 +59,9 @@ ApplicationWindow {
         }
     }
 
-
     MediaPlayer {
         id: mp
-        videoOutput: vc1
+        videoOutput: vc4
         audioOutput: ao
     }
 
@@ -107,15 +107,20 @@ ApplicationWindow {
             console.debug("*** We have decklink support")
 
             // Sinks
-            dlsink.setOutput(0) // Duo 2 SDI-1 (1+2)
+            dlsink.setOutput(0) // Duo 2 SDI-1 (1+2), SDI 1 & 3
             var d0=dl.device(0)
             console.debug(d0.name)
             outputCombo.model=d0.outputModes
             outputCombo.currentIndex=outputCombo.indexOfValue(dlsink.getMode());
             mp.audioBufferOutput=dlsink.getAudioBuffer()
 
+            dlsink2.setOutput(1) // Duo 2 SDI-2
+            var d1=dl.device(0)
+            outputCombo2.model=d1.outputModes
+            outputCombo2.currentIndex=outputCombo.indexOfValue(dlsink2.getMode());
+
             // Sources
-            dlsrc.setInput(3)
+            dlsrc.setInput(3) // Duo 2 SDI-4
             var d3=dl.device(3)
             console.debug(d3.name)
             inputCombo.model=d3.inputModes
@@ -124,24 +129,45 @@ ApplicationWindow {
         Component.onCompleted: {
             console.debug("API Version used", dl.version())
         }        
-    }
+    }    
 
     DeckLinkSink {
         id: dlsink
         decklink: dl
-        videoSink: vc1.videoSink
+        videoSink: vc4.videoSink
+    }
+
+    DeckLinkSink {
+        id: dlsink2
+        decklink: dl
+        videoSink: vc3.videoSink
     }
 
     DeckLinkSource {
         id: dlsrc
         decklink: dl
-        videoSink: vc2.videoSink
+        videoSink: vc1.videoSink
 
         onInvalidSignal: {
             console.debug("*** Invalid input signal")
         }
         onValidSignal: {
             console.debug("*** Got valid input signal")
+        }
+    }
+
+    ImageDrawer {
+        id: imageDrawer
+
+        onImageSet: {
+            switch (dest) {
+            case 1:
+                dlsink.displayImage(image)
+                break;
+            case 2:
+                dlsink2.displayImage(image)
+                break;
+            }
         }
     }
 
@@ -192,14 +218,6 @@ ApplicationWindow {
                 enabled: dlsrc.streaming
                 onClicked: dlsrc.disableInput()
             }
-
-            ToolButton {
-                text: "Grab"
-                enabled: dlsrc.streaming
-                onClicked: {
-                    dlsrc.grabFrame();
-                }
-            }
             Label {
                 text: "Output"
             }
@@ -223,6 +241,38 @@ ApplicationWindow {
                 onClicked: dlsink.disableOutput()
             }
             ToolButton {
+                text: "Camera"
+                enabled: !camera.active
+                onClicked: {
+                    camera.start();
+                }
+            }
+            ComboBox {
+                id: outputCombo2
+                textRole: "name"
+                valueRole: "mode"
+                onActivated: {
+                    console.debug("Output mode", currentValue)
+                    dlsink2.setMode(currentValue)
+                }
+            }
+            ToolButton {
+                text: "Enable"
+                enabled: !dlsink2.outputEnabled
+                onClicked: dlsink2.enableOutput();
+            }
+            ToolButton {
+                text: "Disable"
+                enabled: dlsink2.outputEnabled
+                onClicked: dlsink2.disableOutput()
+            }
+        }
+    }
+
+    ToolBar {
+        id: secondaryToolbar
+        RowLayout {
+            ToolButton {
                 text: "Open"
                 onClicked: videoFilesDialog.open()
             }
@@ -234,11 +284,61 @@ ApplicationWindow {
                 text: "Stop"
                 onClicked: mp.stop()
             }
+            ToolSeparator {
+
+            }
             ToolButton {
-                text: "Camera"
-                enabled: !camera.active
+                text: "Grab"
+                enabled: dlsrc.streaming
                 onClicked: {
-                    camera.start();
+                    dlsrc.grabFrame();
+                }
+            }
+            ToolSeparator {
+
+            }
+            ToolButton {
+                text: "Image"
+                onClicked: imageDrawer.open()
+            }
+
+            ToolButton {
+                text: "K-ON"
+                onClicked: {
+                    dlsink.setKeyer(true)
+                }
+            }
+            ToolButton {
+                text: "K-Off"
+                onClicked: {
+                    dlsink.setKeyer(false)
+                }
+            }
+            ToolButton {
+                text: "KR-Up"
+                onClicked: {
+                    dlsink.keyerRampUp(60)
+                }
+            }
+            ToolButton {
+                text: "KR-Down"
+                onClicked: {
+                    dlsink.keyerRampDown(60)
+                }
+            }
+            ToolButton {
+                text: "PM"
+                checkable: true
+                checked: dlsink.premultiplied
+                onClicked: dlsink.premultiplied=checked
+            }
+            Slider {
+                from: 0
+                to: 255
+                stepSize: 1
+                wheelEnabled: true
+                onMoved: {
+                    dlsink.keyerLevel(value)
                 }
             }
         }
@@ -290,6 +390,12 @@ ApplicationWindow {
                     Layout.minimumHeight: 256
                     Layout.preferredWidth: mainRow.width/2
                     fillMode: Image.PreserveAspectFit
+                    Rectangle {
+                        anchors.fill: parent
+                        border.color: "blue"
+                        border.width: 1
+                        color: "transparent"
+                    }
                 }
                 // 2
                 VideoOutput {
@@ -300,6 +406,12 @@ ApplicationWindow {
                     Layout.minimumHeight: 256
                     Layout.preferredWidth: mainRow.width/2
                     fillMode: Image.PreserveAspectFit
+                    Rectangle {
+                        anchors.fill: parent
+                        border.color: "blue"
+                        border.width: 1
+                        color: "transparent"
+                    }
                 }
                 // 3
                 VideoOutput {
@@ -310,6 +422,12 @@ ApplicationWindow {
                     Layout.minimumHeight: 256
                     Layout.preferredWidth: mainRow.width/2
                     fillMode: Image.PreserveAspectFit
+                    Rectangle {
+                        anchors.fill: parent
+                        border.color: "blue"
+                        border.width: 1
+                        color: "transparent"
+                    }
                 }
                 // 2
                 VideoOutput {
@@ -320,6 +438,12 @@ ApplicationWindow {
                     Layout.minimumHeight: 256
                     Layout.preferredWidth: mainRow.width/2
                     fillMode: Image.PreserveAspectFit
+                    Rectangle {
+                        anchors.fill: parent
+                        border.color: "blue"
+                        border.width: 1
+                        color: "transparent"
+                    }
                 }
             }
         }

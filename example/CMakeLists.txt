@@ -15,6 +15,7 @@ qt_add_qml_module(example
     QML_FILES Example.qml
     IMPORTS TARGET cutedeck
     DEPENDENCIES CuteDeck
+    QML_FILES ImageDrawer.qml
 )
 
 target_link_libraries(example PRIVATE Qt6::Core Qt6::Gui Qt6::Qml Qt6::Multimedia cutedeck)
