@@ -33,6 +33,9 @@ struct CUTEDECK_EXPORT DeckLinkDevice
     QVariantList outputModes;
     QVariantList inputModes;
 
+    QVariantList outputConnectors;
+    QVariantList inputConnectors;
+
     IDeckLink *dev=nullptr;
     IDeckLinkOutput *output=nullptr;
     IDeckLinkInput *input=nullptr;
@@ -55,6 +58,8 @@ struct CUTEDECK_EXPORT DeckLinkDevice
     Q_PROPERTY(QVariantMap properties MEMBER properties)
     Q_PROPERTY(QVariantList outputModes MEMBER outputModes)
     Q_PROPERTY(QVariantList inputModes MEMBER inputModes)
+    Q_PROPERTY(QVariantList outputConnectors MEMBER outputConnectors)
+    Q_PROPERTY(QVariantList inputConnectors MEMBER inputConnectors)
 };
 Q_DECLARE_METATYPE(DeckLinkDevice)
 

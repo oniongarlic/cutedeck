@@ -1,4 +1,5 @@
 #include "decklink.h"
+#include "decklinksource.h"
 
 #include <QUrl>
 #include <QTimer>
@@ -29,6 +30,37 @@ static QVariantMap getConnections(BMDVideoConnection value)
     vo["component"]=(bool)(bmdVideoConnectionComponent & value);
     vo["composite"]=(bool)(bmdVideoConnectionComposite & value);
     vo["svideo"]=(bool)(bmdVideoConnectionSVideo & value);
+
+    return vo;
+}
+
+static QVariantMap getConnectionMap(Decklinksource::InputConnector value, QString name)
+{
+    QVariantMap v;
+
+    v["input"]=value;
+    v["name"]=name;
+
+    return v;
+}
+
+static QVariantList getConnectionsList(BMDVideoConnection value)
+{
+    QVariantList vo;
+    QVariantMap v;
+
+    if ((bmdVideoConnectionHDMI & value))
+        vo.append(getConnectionMap(Decklinksource::InputConnectorHDMI, "HDMI"));
+    if ((bmdVideoConnectionSDI & value))
+        vo.append(getConnectionMap(Decklinksource::InputConnectorSDI, "SDI"));
+    if ((bmdVideoConnectionOpticalSDI & value))
+        vo.append(getConnectionMap(Decklinksource::InputConnectorOpticalSDI, "Optical SDI"));
+    if ((bmdVideoConnectionComponent & value))
+        vo.append(getConnectionMap(Decklinksource::InputConnectorComponent, "Component"));
+    if ((bmdVideoConnectionComposite & value))
+        vo.append(getConnectionMap(Decklinksource::InputConnectorComposite, "Composite"));
+    if ((bmdVideoConnectionSVideo & value))
+        vo.append(getConnectionMap(Decklinksource::InputConnectorSVideo, "S-Video"));
 
     return vo;
 }
@@ -235,6 +267,8 @@ DeckLink::DeckLink(QObject *parent)
         dld->persistentID=getInt(deckLinkAttributes, BMDDeckLinkPersistentID);
         dld->topologicalID=getInt(deckLinkAttributes, BMDDeckLinkTopologicalID);
 
+        BMDVideoConnection in,out;
+
         if (deckLinkAttributes->GetInt(BMDDeckLinkVideoIOSupport, &value) != S_OK) {
             qDebug("Failed to get video IO support, skipping");
             goto out;
@@ -262,8 +296,14 @@ DeckLink::DeckLink(QObject *parent)
         dev["subdevices"]=(qint64)getInt(deckLinkAttributes, BMDDeckLinkNumberOfSubDevices);
         dev["subindex"]=(qint64)getInt(deckLinkAttributes, BMDDeckLinkSubDeviceIndex);
 
-        dev["outputs"]=getConnections((BMDVideoConnection)getInt(deckLinkAttributes, BMDDeckLinkVideoOutputConnections));
-        dev["inputs"]=getConnections((BMDVideoConnection)getInt(deckLinkAttributes, BMDDeckLinkVideoInputConnections));
+        in=(BMDVideoConnection)getInt(deckLinkAttributes, BMDDeckLinkVideoOutputConnections);
+        out=(BMDVideoConnection)getInt(deckLinkAttributes, BMDDeckLinkVideoInputConnections);
+
+        dev["outputs"]=getConnections(out);
+        dev["inputs"]=getConnections(in);
+
+        dld->inputConnectors=getConnectionsList(in);
+        dld->outputConnectors=getConnectionsList(out);
 
         // Collect output details
         if ((value & bmdDeviceSupportsPlayback) != 0) {

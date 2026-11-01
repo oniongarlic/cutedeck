@@ -168,7 +168,31 @@ bool Decklinksource::setInput(uint index)
 
 bool Decklinksource::setInputConnector(InputConnector ic)
 {
-    return false;
+    IDeckLinkConfiguration *config = nullptr;
+    BMDVideoConnection vc;
+
+    switch (ic) {
+    case InputConnectorSDI:
+    case InputConnectorOpticalSDI:
+    case InputConnectorHDMI:
+    case InputConnectorComponent:
+    case InputConnectorComposite:
+    case InputConnectorSVideo:
+        vc=ic;
+        break;
+    default:
+        qWarning("Invalid input");
+        return false;
+    }
+
+    HRESULT hr = m_input->QueryInterface(IID_IDeckLinkConfiguration, (void**)&config);
+
+    if (SUCCEEDED(hr)) {
+        hr = config->SetInt(bmdDeckLinkConfigVideoInputConnection, ic);
+    }
+    config->Release();
+
+    return SUCCEEDED(hr);
 }
 
 qint32 Decklinksource::getMode()

@@ -111,7 +111,7 @@ ApplicationWindow {
             var d0=dl.device(0)
             console.debug(d0.name)
             outputCombo.model=d0.outputModes
-            outputCombo.currentIndex=outputCombo.indexOfValue(dlsink.getMode());
+            outputCombo.currentIndex=outputCombo.indexOfValue(dlsink.getMode());            
             mp.audioBufferOutput=dlsink.getAudioBuffer()
 
             dlsink2.setOutput(1) // Duo 2 SDI-2
@@ -124,6 +124,7 @@ ApplicationWindow {
             var d3=dl.device(3)
             console.debug(d3.name)
             inputCombo.model=d3.inputModes
+            inputConnectorCombo.model=d0.inputConnectors
             inputCombo.currentIndex=inputCombo.indexOfValue(dlsrc.getMode());
         }
         Component.onCompleted: {
@@ -208,6 +209,12 @@ ApplicationWindow {
                     dlsrc.setMode(currentValue)
                 }
             }
+            ComboBox {
+                id: inputConnectorCombo
+                textRole: "name"
+                valueRole: "id"
+            }
+
             ToolButton {
                 text: "Enable"
                 enabled: !dlsrc.streaming

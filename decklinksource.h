@@ -57,8 +57,8 @@ public:
 
     enum InputConnector {
         InputConnectorSDI=bmdVideoConnectionSDI,
-        InputConnectorOpticalSDI=bmdVideoConnectionOpticalSDI,
         InputConnectorHDMI=bmdVideoConnectionHDMI,
+        InputConnectorOpticalSDI=bmdVideoConnectionOpticalSDI,        
         InputConnectorComponent=bmdVideoConnectionComponent,
         InputConnectorComposite=bmdVideoConnectionComposite,
         InputConnectorSVideo=bmdVideoConnectionSVideo,
