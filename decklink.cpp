@@ -66,7 +66,7 @@ static QVariantList getConnectionsList(BMDVideoConnection value)
 }
 
 static bool getFlag(IDeckLinkProfileAttributes* dla, BMDDeckLinkAttributeID id) {
-    bool bval=false;
+    BOOL bval=false;
 
     if (dla->GetFlag(id, &bval) != S_OK) {
         qDebug() << "Failed to get flag for (default to false)." << id;
@@ -113,10 +113,15 @@ public:
         case bmdPreferencesChanged:
             qDebug() << "bmdPreferencesChanged"  << param1 << param2;
             break;
-        case bmdStatusChanged:
+        case bmdStatusChanged: {
             qDebug() << "bmdStatusChanged"  << param1 << param2;
             BMDDeckLinkStatusID id = (BMDDeckLinkStatusID)param1;
             handleStatusChanged(id, param2);
+        }
+            break;
+        case bmdIPFlowStatusChanged:
+        case bmdIPFlowSettingChanged:
+            qWarning("IP notifications not handled");
             break;
         }
 
@@ -131,7 +136,7 @@ public:
     {
         HRESULT result;
         int64_t ival;
-        bool bval;
+        BOOL bval;
 
         if (!m_status)
             return;
@@ -157,6 +162,8 @@ public:
             result = m_status->GetFlag(id, &bval);
             qDebug() << "Locked" << ival;
         break;
+        default:
+            qWarning("Status flag not yet handled");
         }
     }
 
@@ -475,7 +482,7 @@ DeckLink::DeckLink(QObject *parent)
         IDeckLinkStatistics *statistics;
         result = deckLink->QueryInterface(IID_IDeckLinkStatistics, (void**)&statistics);
         if (result == S_OK) {
-            auto temp=getInt<IDeckLinkStatistics, BMDDeckLinkAttributeID >(statistics, bmdDeckLinkStatisticDeviceTemperature);
+            auto temp=getInt<IDeckLinkStatistics, BMDDeckLinkStatisticID>(statistics, bmdDeckLinkStatisticDeviceTemperature);
             qDebug() << temp;
             dld->statistics=statistics;
         }
