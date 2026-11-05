@@ -341,6 +341,8 @@ void Decklinksource::processFrame()
 
     QVideoFrameFormat vff(QSize(w,h), QVideoFrameFormat::Format_ARGB8888);
     vff.setStreamFrameRate(m_fps);
+    vff.setColorSpace(QVideoFrameFormat::ColorSpace_BT709);
+    vff.setColorRange(QVideoFrameFormat::ColorRange_Video);
 
     QVideoFrame vf(vff);
 
