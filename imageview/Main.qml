@@ -16,7 +16,7 @@ ApplicationWindow {
     visible: true
     width: 1024
     height: 768
-    title: qsTr("CuteDeck devices example")
+    title: qsTr("CuteDeck Image Viewer")
 
     header: mainToolbar
     footer: secondaryToolbar
@@ -55,7 +55,7 @@ ApplicationWindow {
 
     MediaPlayer {
         id: mp
-        videoOutput: vc4
+        // videoOutput: vc4
         audioOutput: ao
     }
 
@@ -73,6 +73,14 @@ ApplicationWindow {
         }
     }
 
+    function setSinkDevice(i) {
+        dlsink.setOutput(i)
+        var d0=dl.device(i)
+        console.debug(d0.name)
+        outputCombo.model=d0.outputModes
+        outputCombo.currentIndex=outputCombo.indexOfValue(dlsink.getMode());
+    }
+
     DeckLink {
         id: dl
         onDevicesChanged: {
@@ -80,11 +88,7 @@ ApplicationWindow {
             deviceCombo.model=getDevices();
 
             // Sinks
-            dlsink.setOutput(0) // Duo 2 SDI-1 (1+2), SDI 1 & 3
-            var d0=dl.device(0)
-            console.debug(d0.name)
-            outputCombo.model=d0.outputModes
-            outputCombo.currentIndex=outputCombo.indexOfValue(dlsink.getMode());
+            setSinkDevice(0)
             mp.audioBufferOutput=dlsink.getAudioBuffer()
         }
         onHaveDeckLinkChanged: {
@@ -114,6 +118,7 @@ ApplicationWindow {
                 valueRole: "index"
                 onActivated: {
                     console.debug("Device", currentValue)
+                    setSinkDevice(currentValue)
                     var d=dl.device(currentValue)
                     console.debug(d)
                     console.debug(d.persistentID)
@@ -281,36 +286,75 @@ ApplicationWindow {
                 Layout.fillHeight: false
                 Layout.fillWidth: true
                 Layout.minimumHeight: 200
-                Layout.maximumHeight: 400
-                uniformCellSizes: true
-                Image {
-                    id: imagePreview
-                    Layout.fillHeight: true
-                    Layout.fillWidth: true
-                    fillMode: Image.PreserveAspectFit
-                    sourceSize.width: 1920/2
-                    sourceSize.height: 1080/2
-                    asynchronous: true
-                    Rectangle {
+                Layout.maximumHeight: 300
+                Rectangle {
+                    width: (root.width/5)*2
+                    height: Math.min(root.height/3, 300)
+                    border.color: "green"
+                    border.width: 2
+                    color: "transparent"
+                    Image {
+                        id: imagePreview
                         anchors.fill: parent
-                        border.color: "green"
-                        border.width: 1
-                        color: "transparent"
+                        anchors.margins: 2
+                        fillMode: Image.PreserveAspectFit
+                        sourceSize.width: 1920/2
+                        sourceSize.height: 1080/2
+                        asynchronous: true
                     }
                 }
-                Image {
-                    id: imageOutput
-                    Layout.fillHeight: true
+
+                ColumnLayout {
+                    Layout.minimumWidth: 60
                     Layout.fillWidth: true
-                    fillMode: Image.PreserveAspectFit
-                    sourceSize.width: 1920/2
-                    sourceSize.height: 1080/2
-                    asynchronous: true
-                    Rectangle {
+                    Layout.fillHeight: true
+                    spacing: 16
+                    Button {
+                        text: "Set live"
+                        Layout.alignment: Qt.AlignHCenter
+                        onClicked: {
+                            imageOutput.source=imagePreview.source
+                            dlsink.displayImage(imageOutput.source)
+                        }
+                    }
+                    Button {
+                        text: "Clear black"
+                        Layout.alignment: Qt.AlignHCenter
+                        onClicked: {
+                            dlsink.clearBuffer(0)
+                        }
+                    }
+                    Button {
+                        text: "Clear white"
+                        Layout.alignment: Qt.AlignHCenter
+                        onClicked: {
+                            dlsink.clearBuffer(255)
+                        }
+                    }
+                    Label {
+                        text: "Fade"
+                    }
+                    Slider {
+                        Layout.fillWidth: true
+                        from: 0
+                        to: 255
+                        onValueChanged: dlsink.clearBuffer(value)
+                    }
+                }
+                Rectangle {
+                    width: (root.width/5)*2
+                    height: Math.min(root.height/3, 300)
+                    border.color: "red"
+                    border.width: 2
+                    color: "transparent"
+                    Image {
+                        id: imageOutput
                         anchors.fill: parent
-                        border.color: "red"
-                        border.width: 1
-                        color: "transparent"
+                        anchors.margins: 2
+                        fillMode: Image.PreserveAspectFit
+                        sourceSize.width: 1920/2
+                        sourceSize.height: 1080/2
+                        asynchronous: true
                     }
                 }
             }
@@ -325,7 +369,7 @@ ApplicationWindow {
                     delegate: folderDelegate
 
                     Layout.fillHeight: true
-                    Layout.fillWidth: true
+                    Layout.fillWidth: false
                     Layout.minimumWidth: 200
                     Layout.maximumWidth: 460
                     clip: true
