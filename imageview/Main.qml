@@ -21,6 +21,8 @@ ApplicationWindow {
     header: mainToolbar
     footer: secondaryToolbar
 
+    readonly property int imgSize: imgThumbSizeSlider.value+5
+
     menuBar: MenuBar {
         Menu {
             title: "Profile"
@@ -90,8 +92,8 @@ ApplicationWindow {
         }
         Component.onCompleted: {
             console.debug("API Version used", dl.version())
-        }        
-    }    
+        }
+    }
 
     DeckLinkSink {
         id: dlsink
@@ -118,7 +120,6 @@ ApplicationWindow {
                     var dev=dl.getDeviceProperties(currentValue)
                     var j=JSON.stringify(dev);
                     console.debug(j)
-                    debug.text=j;
                 }
             }
             Label {
@@ -210,6 +211,17 @@ ApplicationWindow {
                     dlsink.keyerLevel(value)
                 }
             }
+            ToolSeparator {
+
+            }
+            Slider {
+                id: imgThumbSizeSlider
+                from: 1
+                to: 10
+                value: 4
+                stepSize: 1
+                wheelEnabled: true
+            }
         }
     }
 
@@ -224,6 +236,7 @@ ApplicationWindow {
 
     FolderListModel {
         id: folderModel
+        folder: "file://"+imagePath
         showDotAndDotDot: true
         showDirsFirst: true
         showFiles: false
@@ -345,9 +358,10 @@ ApplicationWindow {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     Layout.minimumHeight: 200
-                    cellHeight: 196
-                    cellWidth: 112
+                    cellWidth: 1920/imgSize
+                    cellHeight: 1080/imgSize
                     clip: true
+                    focus: true
 
                     highlight: Rectangle { color: "lightsteelblue"; radius: 2 }
 
@@ -357,31 +371,36 @@ ApplicationWindow {
                         imagePreview.source=f;
                     }
 
+                    ScrollBar.vertical: ScrollBar {
+
+                    }
+
                     Component {
                         id: fileDelegate
                         ItemDelegate {
                             id: fid
-                            width: 1920/10
-                            height: 1080/10
+                            width: fileList.cellWidth
+                            height: fileList.cellHeight
 
                             onClicked: {
                                 onClicked: fileList.processItem(index);
                             }
                             Image {
-                                width: 192
-                                height: 108
-                                anchors.centerIn: parent
+                                anchors.fill: parent
+                                anchors.margins: 4
                                 fillMode: Image.PreserveAspectFit
                                 source: fileUrl
-                                sourceSize.width: 192
-                                sourceSize.height: 108
+                                sourceSize.width: 192*2
+                                sourceSize.height: 108*2
                                 asynchronous: true
                             }
                             Rectangle {
                                 anchors.fill: parent
+                                anchors.margins: 2
                                 border.color: "blue"
                                 border.width: fid.highlighted ? 3 : 1
                                 color: "transparent"
+                                radius: 2
                             }
                         }
                     }
