@@ -178,7 +178,7 @@ bool Decklinksource::setInputConnector(InputConnector ic)
     case InputConnectorComponent:
     case InputConnectorComposite:
     case InputConnectorSVideo:
-        vc=ic;
+        vc=(BMDVideoConnection)ic;
         break;
     default:
         qWarning("Invalid input");
@@ -188,7 +188,7 @@ bool Decklinksource::setInputConnector(InputConnector ic)
     HRESULT hr = m_input->QueryInterface(IID_IDeckLinkConfiguration, (void**)&config);
 
     if (SUCCEEDED(hr)) {
-        hr = config->SetInt(bmdDeckLinkConfigVideoInputConnection, ic);
+        hr = config->SetInt(bmdDeckLinkConfigVideoInputConnection, vc);
     }
     config->Release();
 
