@@ -1,5 +1,5 @@
 #include <QtCore>
-
+#include <QDebug>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
@@ -17,6 +17,8 @@ int main(int argc, char *argv[])
 
     auto image_path=QStandardPaths::writableLocation(QStandardPaths::PicturesLocation);
     engine.rootContext()->setContextProperty("imagePath", image_path);
+
+    qDebug() << image_path;
 
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreationFailed,
         &app, []() { QCoreApplication::exit(-1); },

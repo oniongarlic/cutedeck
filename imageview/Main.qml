@@ -22,6 +22,10 @@ ApplicationWindow {
     footer: secondaryToolbar
 
     readonly property int imgSize: imgThumbSizeSlider.value+5
+    readonly property double fhdr: 16/9;
+
+    readonly property int iWidth: (root.width/5)*2
+    readonly property int iHeight: iWidth/fhdr
 
     menuBar: MenuBar {
         Menu {
@@ -181,29 +185,34 @@ ApplicationWindow {
             }
             ToolButton {
                 text: "Key ON"
+                enabled: dlsink.hasKeyer
                 onClicked: {
                     dlsink.setKeyer(true)
                 }
             }
             ToolButton {
                 text: "Key Off"
+                enabled: dlsink.hasKeyer
                 onClicked: {
                     dlsink.setKeyer(false)
                 }
             }
             ToolButton {
                 text: "KeyUp"
+                enabled: dlsink.hasKeyer
                 onClicked: {
                     dlsink.keyerRampUp(60)
                 }
             }
             ToolButton {
                 text: "KeyDown"
+                enabled: dlsink.hasKeyer
                 onClicked: {
                     dlsink.keyerRampDown(60)
                 }
             }
             Slider {
+                enabled: dlsink.hasKeyer
                 from: 0
                 to: 255
                 stepSize: 1
@@ -232,12 +241,12 @@ ApplicationWindow {
         showDotAndDotDot: true
         showDirsFirst: true
         showDirs: false
-        nameFilters: ["*.jpg", "*.png", "*.jpeg"]
+        nameFilters: ["*.jpg", "*.png", "*.jpeg", "*.gif"]
     }
 
     FolderListModel {
         id: folderModel
-        folder: "file://"+imagePath
+        folder: "file:///"+imagePath
         showDotAndDotDot: true
         showDirsFirst: true
         showFiles: false
@@ -284,8 +293,8 @@ ApplicationWindow {
                 Layout.minimumHeight: root.height/3
                 Layout.maximumHeight: root.height/2
                 Rectangle {
-                    Layout.preferredWidth: (root.width/5)*2
-                    Layout.preferredHeight: Math.min(root.height/3, 300)
+                    Layout.preferredWidth: iWidth
+                    Layout.preferredHeight: iHeight
                     border.color: "green"
                     border.width: 2
                     color: "transparent"
@@ -305,6 +314,8 @@ ApplicationWindow {
                     Layout.maximumWidth: root.width/5
                     Layout.fillWidth: true
                     Layout.fillHeight: true
+                    Layout.leftMargin: 8
+                    Layout.rightMargin: 8
                     spacing: 16
                     Button {
                         text: "Set live"
@@ -339,8 +350,8 @@ ApplicationWindow {
                     }
                 }
                 Rectangle {
-                    Layout.preferredWidth: (root.width/5)*2
-                    Layout.preferredHeight: Math.min(root.height/3, 300)
+                    Layout.preferredWidth: iWidth
+                    Layout.preferredHeight: iHeight
                     border.color: "red"
                     border.width: 2
                     color: "transparent"
