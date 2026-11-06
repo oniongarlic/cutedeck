@@ -240,8 +240,8 @@ DeckLink::DeckLink(QObject *parent)
         dld->key=nullptr;
 
         QVariantMap dev;
-        dev["modelName"]=QVariant(model);
-        dev["displayName"]=QVariant(name);
+        dev["modelName"]=QVariant(dld->model);
+        dev["displayName"]=QVariant(dld->name);
 
         qDebug() << "*** Device: " << dld->name << dld->model;
 
