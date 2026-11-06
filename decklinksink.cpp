@@ -79,6 +79,8 @@ bool Decklinksink::setOutput(uint index)
     m_output=d->output;
     m_keyer=d->key;
 
+    emit hasKeyerChanged();
+
     qDebug() << "Decklink output set to " << m_current << d->name;
 
     result = m_output->CreateVideoFrame(m_fbsize.width(), m_fbsize.height(), m_fbsize.width()*4, bmdFormat8BitBGRA, bmdFrameFlagDefault, &m_frame);
@@ -337,7 +339,7 @@ void Decklinksink::imageToBuffer(const QImage &frame)
         goto out;
     }
 
-    memset(deckLinkBuffer, 0, m_frame->GetWidth()*m_frame->GetHeight()*4);
+    memset(deckLinkBuffer, m_bgcol, m_frame->GetWidth()*m_frame->GetHeight()*4);
 
     for (int i=0;i<frame.height(); i++) {
         memcpy(deckLinkBuffer, frame.constScanLine(i), frame.bytesPerLine());
@@ -560,6 +562,11 @@ void Decklinksink::setDecklink(QObject *newDecklink)
 
     m_decklink = qobject_cast<DeckLink*>(newDecklink);
     emit decklinkChanged();
+}
+
+bool Decklinksink::hasKeyer() const
+{
+    return m_keyer ? true : false;
 }
 
 bool Decklinksink::keyEnabled() const

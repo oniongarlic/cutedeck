@@ -29,6 +29,7 @@ class CUTEDECK_EXPORT Decklinksink : public QObject
     Q_PROPERTY(QObject* videoSink READ getVideoSink WRITE setVideoSink NOTIFY videoSinkChanged FINAL)
     Q_PROPERTY(QObject* audioSink READ getAudioSink FINAL)
     Q_PROPERTY(bool outputEnabled READ outputEnabled NOTIFY outputEnabledChanged FINAL)
+    Q_PROPERTY(bool hasKeyer READ hasKeyer NOTIFY hasKeyerChanged FINAL)
     Q_PROPERTY(bool keyEnabled READ keyEnabled NOTIFY keyEnabledChanged FINAL)
     Q_PROPERTY(bool premultiplied READ premultiplied WRITE setPremultiplied NOTIFY premultipliedChanged FINAL)
     Q_PROPERTY(bool audio READ audioEnabled WRITE setAudioEnabled NOTIFY audioEnabledChanged FINAL)
@@ -66,6 +67,7 @@ public:
     QObject *getDecklink() const;
     void setDecklink(QObject *newDecklink);
 
+    bool hasKeyer() const;
     bool keyEnabled() const;
 
     Q_INVOKABLE QObject *getAudioSink() const;
@@ -86,6 +88,7 @@ signals:
 
     void decklinkChanged();
 
+    void hasKeyerChanged();
     void keyEnabledChanged();
 
     void audioEnabledChanged();
@@ -134,6 +137,8 @@ private:
     BMDDisplayMode m_mode=bmdModeHD1080p6000; // bmdModeHD1080p30
     bool m_premultiplied;
     bool m_outputEnabled=false;
+
+    uint8_t m_bgcol=0;
 };
 
 #endif // DECKLINKSINK_H
