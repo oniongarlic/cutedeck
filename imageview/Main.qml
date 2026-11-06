@@ -171,10 +171,6 @@ ApplicationWindow {
 
             }
             ToolButton {
-                text: "Image"
-                onClicked: imageDrawer.open()
-            }
-            ToolButton {
                 text: "PM"
                 checkable: true
                 checked: dlsink.premultiplied
@@ -285,11 +281,11 @@ ApplicationWindow {
                 id: imageRow
                 Layout.fillHeight: false
                 Layout.fillWidth: true
-                Layout.minimumHeight: 200
-                Layout.maximumHeight: 300
+                Layout.minimumHeight: root.height/3
+                Layout.maximumHeight: root.height/2
                 Rectangle {
-                    width: (root.width/5)*2
-                    height: Math.min(root.height/3, 300)
+                    Layout.preferredWidth: (root.width/5)*2
+                    Layout.preferredHeight: Math.min(root.height/3, 300)
                     border.color: "green"
                     border.width: 2
                     color: "transparent"
@@ -305,7 +301,8 @@ ApplicationWindow {
                 }
 
                 ColumnLayout {
-                    Layout.minimumWidth: 60
+                    Layout.minimumWidth: 120
+                    Layout.maximumWidth: root.width/5
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     spacing: 16
@@ -342,8 +339,8 @@ ApplicationWindow {
                     }
                 }
                 Rectangle {
-                    width: (root.width/5)*2
-                    height: Math.min(root.height/3, 300)
+                    Layout.preferredWidth: (root.width/5)*2
+                    Layout.preferredHeight: Math.min(root.height/3, 300)
                     border.color: "red"
                     border.width: 2
                     color: "transparent"
