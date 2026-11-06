@@ -337,6 +337,8 @@ void Decklinksink::imageToBuffer(const QImage &frame)
         goto out;
     }
 
+    memset(deckLinkBuffer, 0, m_frame->GetWidth()*m_frame->GetHeight()*4);
+
     for (int i=0;i<frame.height(); i++) {
         memcpy(deckLinkBuffer, frame.constScanLine(i), frame.bytesPerLine());
         deckLinkBuffer += m_frame->GetRowBytes();
