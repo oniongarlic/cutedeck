@@ -29,31 +29,11 @@ ApplicationWindow {
 
     menuBar: MenuBar {
         Menu {
-            title: "Profile"
+            title: "File"
             MenuItem {
-                text: "Clear"
-                onClicked: dlsink.setProfile(DeckLinkSink.ProfileDefault)
-            }
-            MenuItem {
-                text: "1 1-Full"
-                onClicked: dlsink.setProfile(DeckLinkSink.ProfileOneSubDeviceFullDuplex)
-            }
-            MenuItem {
-                text: "2 1-Half"
-                onClicked: dlsink.setProfile(DeckLinkSink.ProfileOneSubDeviceHalfDuplex)
-            }
-            MenuItem {
-                text: "3 2-Full"
-                onClicked: dlsink.setProfile(3)
-            }
-            MenuItem {
-                text: "4 2-Half"
-                onClicked: dlsink.setProfile(4)
-            }
-            MenuItem {
-                text: "5 4-Half"
-                onClicked: dlsink.setProfile(5)
-            }
+                text: "Quit"
+                onClicked: Qt.quit()
+            }            
         }
     }
 
@@ -75,6 +55,15 @@ ApplicationWindow {
         onAccepted: {
             mp.source=selectedFile;
         }
+    }
+
+    FolderDialog {
+         id: folderDialog
+         currentFolder: StandardPaths.standardLocations(StandardPaths.PicturesLocation)[0]
+         options: FolderDialog.ReadOnly
+         onAccepted: {
+             folderModel.folder=selectedFolder
+         }
     }
 
     function setSinkDevice(i) {
@@ -120,6 +109,7 @@ ApplicationWindow {
                 id: deviceCombo
                 textRole: "name"
                 valueRole: "index"
+                enabled: !dlsink.outputEnabled
                 onActivated: {
                     console.debug("Device", currentValue)
                     setSinkDevice(currentValue)
@@ -138,6 +128,7 @@ ApplicationWindow {
                 id: outputCombo
                 textRole: "name"
                 valueRole: "mode"
+                enabled: !dlsink.outputEnabled
                 onActivated: {
                     console.debug("Output mode", currentValue)
                     dlsink.setMode(currentValue)
@@ -159,6 +150,10 @@ ApplicationWindow {
     ToolBar {
         id: secondaryToolbar
         RowLayout {
+            ToolButton {
+                text: "Folder"
+                onClicked: folderDialog.open()
+            }
             ToolButton {
                 text: "Open"
                 onClicked: videoFilesDialog.open()
@@ -246,7 +241,7 @@ ApplicationWindow {
 
     FolderListModel {
         id: folderModel
-        folder: "file:///"+imagePath
+        folder: StandardPaths.standardLocations(StandardPaths.PicturesLocation)[0] //"file://"+imagePath
         showDotAndDotDot: true
         showDirsFirst: true
         showFiles: false
