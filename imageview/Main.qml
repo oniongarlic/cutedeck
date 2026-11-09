@@ -100,6 +100,7 @@ ApplicationWindow {
 
     ToolBar {
         id: mainToolbar
+        enabled: dl.devices>0
         RowLayout {
             anchors.fill: parent
             Label {
@@ -302,6 +303,12 @@ ApplicationWindow {
                         sourceSize.height: 1080/2
                         asynchronous: true
                     }
+                    ProgressBar {
+                        anchors.centerIn: parent
+                        width: parent.width/2
+                        value: imagePreview.progress
+                        visible: imagePreview.status==Image.Loading
+                    }
                 }
 
                 ColumnLayout {
@@ -433,6 +440,7 @@ ApplicationWindow {
                                 onClicked: fileList.processItem(index);
                             }
                             Image {
+                                id: imageThumbnail
                                 anchors.fill: parent
                                 anchors.margins: 4
                                 fillMode: Image.PreserveAspectFit
@@ -448,6 +456,12 @@ ApplicationWindow {
                                 border.width: fid.highlighted ? 3 : 1
                                 color: "transparent"
                                 radius: 2
+                            }
+                            ProgressBar {
+                                anchors.centerIn: parent
+                                width: parent.width/2
+                                value: imageThumbnail.progress
+                                visible: imageThumbnail.status==Image.Loading
                             }
                         }
                     }
