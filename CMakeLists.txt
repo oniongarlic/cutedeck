@@ -62,6 +62,7 @@ qt_add_qml_module(cutedeck
     PLUGIN_TARGET cutedeckplugin
     DEPENDENCIES QtQuick
     OUTPUT_DIRECTORY CuteDeck
+    SOURCES decklinkmodes.h
 )
 
 add_subdirectory(example)

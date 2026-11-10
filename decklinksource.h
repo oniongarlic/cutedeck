@@ -36,25 +36,6 @@ public:
     explicit Decklinksource(QObject *parent = nullptr);
     bool haveDeckLink() const;
 
-    // xxx { mode, width, height, fps } ?
-    enum InputFormat {
-        VideoSDPAL=bmdModePAL,
-        VideoSDNTSC=bmdModeNTSC,
-        VideoSDPALp=bmdModePALp,
-        VideoSDNTSCp=bmdModeNTSCp,
-
-        VideoHD720p50=bmdModeHD720p50,
-        VideoHD720p59=bmdModeHD720p5994,
-        VideoHD720p60=bmdModeHD720p60,
-
-        VideoHD1080p24=bmdModeHD1080p24,
-        VideoHD1080p25=bmdModeHD1080p25,
-        VideoHD1080p30=bmdModeHD1080p30,
-        VideoHD1080p50=bmdModeHD1080p50,
-        VideoHD1080p60=bmdModeHD1080p6000,
-    };
-    Q_ENUM(InputFormat);
-
     enum InputConnector {
         InputConnectorSDI=bmdVideoConnectionSDI,
         InputConnectorHDMI=bmdVideoConnectionHDMI,
@@ -73,7 +54,7 @@ public:
     Q_INVOKABLE bool setInputConnector(InputConnector ic);
 
     Q_INVOKABLE qint32 getMode();
-    Q_INVOKABLE bool setMode(qint32 mode);
+    Q_INVOKABLE bool setMode(DeckLink::DeviceModes mode);
 
     Q_INVOKABLE bool grabFrame();
     Q_INVOKABLE QImage getImage();

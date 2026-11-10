@@ -200,7 +200,7 @@ qint32 Decklinksource::getMode()
     return m_mode;
 }
 
-bool Decklinksource::setMode(qint32 mode)
+bool Decklinksource::setMode(DeckLink::DeviceModes mode)
 {
     m_mode=(BMDDisplayMode)mode;
 

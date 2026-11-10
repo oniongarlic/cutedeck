@@ -570,6 +570,12 @@ DeckLinkDevice DeckLink::device(int index)
     return *m_devs.at(index);
 }
 
+const DeckLinkModeInfo *DeckLink::getModeInfo(DeviceModes mode) const
+{
+    DeckLinkModes m;
+    return m.findDeckLinkMode((BMDDisplayMode)mode);
+}
+
 DeckLinkDevice *DeckLink::getDevice(int index)
 {    
     if (index>m_devs.count()-1 || index<0) {

@@ -53,7 +53,7 @@ public:
     Q_INVOKABLE bool setOutput(uint index);
 
     Q_INVOKABLE qint32 getMode();
-    Q_INVOKABLE bool setMode(qint32 mode);
+    Q_INVOKABLE bool setMode(DeckLink::DeviceModes mode);
 
     Q_INVOKABLE bool setProfile(DeviceProfile profile);
     Q_INVOKABLE bool setKeyer(bool enable, uint8_t level=255, bool external=true);
@@ -97,7 +97,7 @@ signals:
 
     void outputEnabledChanged();
 
-    void deviceProfileChanged(DeviceProfile profile);
+    void deviceProfileChanged(Decklinksink::DeviceProfile profile);
 
 public slots:
     void displayFrame(const QVideoFrame &frame);
