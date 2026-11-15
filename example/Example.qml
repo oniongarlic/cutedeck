@@ -21,6 +21,13 @@ ApplicationWindow {
 
     menuBar: MenuBar {
         Menu {
+            title: "File"
+            MenuItem {
+                text: "Quit"
+                onClicked: Qt.quit()
+            }
+        }
+        Menu {
             title: "Profile"
             MenuItem {
                 text: "Clear"
