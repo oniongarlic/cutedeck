@@ -67,6 +67,7 @@ qt_add_qml_module(cutedeck
 
 add_subdirectory(example)
 add_subdirectory(imageview)
+add_subdirectory(intensity)
 
 install(TARGETS cutedeck
     BUNDLE DESTINATION .
