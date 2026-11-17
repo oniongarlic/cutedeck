@@ -87,31 +87,39 @@ ApplicationWindow {
             console.debug("*** We have decklink support")
 
             // Sink
-            dlsink.setOutput(0)
-            var d0=dl.device(0)
-            console.debug(d0.name)
-            outputCombo.model=d0.outputModes
-            outputConnectorCombo.model=d0.outputConnectors
-            outputCombo.currentIndex=outputCombo.indexOfValue(dlsink.getMode());            
-            mp.audioBufferOutput=dlsink.getAudioBuffer()
+            setSinkDevice(0)
 
             // Source
-            dlsrc.setInput(0)
-            var d1=dl.device(0)
-            console.debug(d1.name)
-            inputCombo.model=d1.inputModes
-            inputConnectorCombo.model=d1.inputConnectors
-            inputCombo.currentIndex=inputCombo.indexOfValue(dlsrc.getMode());
+            setSourceDevice(0)
         }
         Component.onCompleted: {
             console.debug("API Version used", dl.version())
         }        
-    }    
+    }
+
+    function setSinkDevice(i) {
+        dlsink.setOutput(i)
+        var d0=dl.device(i)
+        console.debug(d0.name)
+        outputCombo.model=d0.outputModes
+        outputConnectorCombo.model=d0.outputConnectors
+        outputCombo.currentIndex=outputCombo.indexOfValue(dlsink.getMode());
+        mp.audioBufferOutput=dlsink.getAudioBuffer()
+    }
+
+    function setSourceDevice(i) {
+        dlsrc.setInput(i)
+        var d1=dl.device(i)
+        console.debug(d1.name)
+        inputCombo.model=d1.inputModes
+        inputConnectorCombo.model=d1.inputConnectors
+        inputCombo.currentIndex=inputCombo.indexOfValue(dlsrc.getMode());
+    }
 
     DeckLinkSink {
         id: dlsink
         decklink: dl
-        videoSink: vc1.videoSink
+        videoSink: vc1.videoSink        
     }
 
     DeckLinkSource {
@@ -147,6 +155,12 @@ ApplicationWindow {
                     var j=JSON.stringify(dev);
                     console.debug(j)
                     debug.text=j;
+
+                    // Sink
+                    setSinkDevice(currentValue)
+
+                    // Source
+                    setSourceDevice(currentValue)
                 }
             }
             Label {
