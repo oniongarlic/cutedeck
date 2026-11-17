@@ -303,8 +303,8 @@ DeckLink::DeckLink(QObject *parent)
         dev["subdevices"]=(qint64)getInt(deckLinkAttributes, BMDDeckLinkNumberOfSubDevices);
         dev["subindex"]=(qint64)getInt(deckLinkAttributes, BMDDeckLinkSubDeviceIndex);
 
-        in=(BMDVideoConnection)getInt(deckLinkAttributes, BMDDeckLinkVideoOutputConnections);
-        out=(BMDVideoConnection)getInt(deckLinkAttributes, BMDDeckLinkVideoInputConnections);
+        out=(BMDVideoConnection)getInt(deckLinkAttributes, BMDDeckLinkVideoOutputConnections);
+        in=(BMDVideoConnection)getInt(deckLinkAttributes, BMDDeckLinkVideoInputConnections);
 
         dev["outputs"]=getConnections(out);
         dev["inputs"]=getConnections(in);
