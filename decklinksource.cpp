@@ -433,11 +433,12 @@ void Decklinksource::processFrame()
     break;
     case bmdFormat8BitBGRA:
     case bmdFormat8BitARGB: {
-        uint8_t *dst;        
+        uint8_t *dst;
+        bool mapped;
 
-        vf.map(QVideoFrame::ReadWrite);
+        mapped=vf.map(QVideoFrame::ReadWrite);
         dst=vf.bits(0);
-        if (deckLinkBuffer)
+        if (deckLinkBuffer && mapped)
             memcpy(dst, deckLinkBuffer, vf.mappedBytes(0));
         vf.unmap();
     }
