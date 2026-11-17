@@ -309,7 +309,7 @@ void Decklinksource::processFrame()
     IDeckLinkAudioInputPacket *ap=nullptr;
     IDeckLinkVideoBuffer* rgbaframeBuffer = nullptr;
     IDeckLinkVideoBuffer* frameBuffer = nullptr;
-    BMDTimeValue stime, ftime;
+    BMDTimeValue stime, ftime, atime;
     BMDTimeScale vscale=1001;
     void *abuffer;
 
@@ -326,7 +326,8 @@ void Decklinksource::processFrame()
         fc=ap->GetSampleFrameCount();
         qDebug() << "Audio" << fc << fc*m_achannels*(m_abitdepth/8);
         if (ap->GetBytes(&abuffer)==S_OK) {
-
+            ap->GetPacketTime(&atime, vscale);
+            qDebug() << atime << m_framecounter;
         }
     }
 
