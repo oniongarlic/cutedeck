@@ -415,10 +415,12 @@ void Decklinksource::processFrame()
 
         {
             uint8_t *dst;
+            bool mapped;
 
-            vf.map(QVideoFrame::ReadWrite);
+            mapped=vf.map(QVideoFrame::ReadWrite);
             dst=vf.bits(0);
-            memcpy(dst, deckLinkBuffer, vf.mappedBytes(0));
+            if (deckLinkBuffer && mapped)
+                memcpy(dst, deckLinkBuffer, vf.mappedBytes(0));
             vf.unmap();
         }
 
